@@ -1,9 +1,17 @@
 // src/utils/api.js
-// Small fetch helpers shared by the CSV import module. Matches the
-// existing app's pattern of calling http://localhost:3000 directly
-// (see App.jsx's generateSeating).
-
-export const API_BASE = "http://localhost:3000";
+// Small fetch helpers shared by the CSV import module.
+//
+// API_BASE is empty by default, which makes every fetch a same-origin,
+// relative request (e.g. "/api/students") - this is what you want when
+// Express serves the built frontend itself (see server.js), such as a
+// single-service Railway deploy.
+//
+// Since this frontend is deployed separately on Netlify while the API
+// runs on Railway, set VITE_API_BASE in Netlify's environment variables
+// to the Railway backend's full URL, e.g.
+// "https://your-backend.up.railway.app" (no trailing slash), then
+// redeploy - env vars are baked in at build time.
+export const API_BASE = import.meta.env.VITE_API_BASE || "";
 
 /**
  * Reads the JWT the same way the rest of the app would once a login
