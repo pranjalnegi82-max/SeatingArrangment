@@ -1,0 +1,426 @@
+/* ============================================================
+   Exam Seating Arrangement System
+   Design concept: the university "answer-ledger" — ruled
+   examination paper, ink-navy officialdom, a red rubber stamp
+   for the one big action, roll numbers set in mono like a
+   ledger book. The seating chart is the signature element:
+   real desks in real rows, not a generic data grid.
+   ============================================================ */
+
+:root {
+  --ink: #1c2b4a;
+  --ink-dark: #101a30;
+  --ink-soft: #2f4266;
+
+  --paper: #efe9d8;
+  --paper-dark: #e4dcc2;
+  --paper-line: #cdc2a0;
+  --paper-line-soft: #ded4b4;
+
+  --stamp: #a13327;
+  --stamp-dark: #7c2620;
+  --stamp-ink: #f3e6d8;
+
+  --text: #241f14;
+  --text-muted: #756c53;
+
+  --seat-empty: #ded4b4;
+  --seat-empty-border: #b9ab7f;
+  --seat-filled: var(--ink);
+  --seat-filled-text: #f3ecd8;
+
+  --font-display: "Roboto Slab", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --radius: 3px;
+}
+
+/* ---------- base / paper surface ---------- */
+
+body {
+  background: var(--paper);
+  background-image:
+    linear-gradient(var(--paper-line-soft) 1px, transparent 1px);
+  background-size: 100% 34px;
+}
+
+#root {
+  width: auto;
+  max-width: 1040px;
+  margin: 0 auto;
+  min-height: 100svh;
+  border-inline: none;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+.container {
+  font-family: var(--font-body);
+  color: var(--text);
+  text-align: left;
+  padding-bottom: 72px;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+/* ---------- masthead ---------- */
+
+.masthead {
+  position: relative;
+  margin: 0 -24px 40px;
+  padding: 40px 24px 32px;
+  background: var(--ink);
+  background-image:
+    repeating-linear-gradient(
+      transparent,
+      transparent 33px,
+      rgba(255, 255, 255, 0.035) 34px
+    );
+  color: var(--stamp-ink);
+  border-bottom: 6px double var(--stamp);
+  text-align: center;
+}
+
+.masthead-eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c9b98f;
+  margin-bottom: 10px;
+}
+
+.masthead h1 {
+  color: #fbf6e9;
+  font-size: 34px;
+  line-height: 1.15;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.stamp-badge {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 6px 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--stamp-ink);
+  border: 1.5px solid var(--stamp);
+  border-radius: 999px;
+  transform: rotate(-2deg);
+}
+
+/* ---------- sections ---------- */
+
+.section {
+  position: relative;
+  background: var(--paper-dark);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  padding: 24px 24px 20px;
+  margin-bottom: 24px;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed var(--paper-line);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.section-head h2 {
+  font-size: 19px;
+}
+
+.section-head h2::after {
+  content: "";
+  display: inline-block;
+  width: 26px;
+  height: 2px;
+  background: var(--stamp);
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.count-chip {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  border-radius: 999px;
+  padding: 1px 9px;
+}
+
+.empty-hint {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 10px 2px 4px;
+}
+
+/* ---------- buttons ---------- */
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.add-btn {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.add-btn:hover {
+  background: var(--ink);
+  color: var(--stamp-ink);
+}
+
+.generate {
+  display: block;
+  margin: 8px auto 40px;
+  padding: 16px 40px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--stamp-ink);
+  background: var(--stamp);
+  border: 2px solid var(--stamp-dark);
+  outline: 3px solid transparent;
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 4px var(--stamp);
+  border-radius: 999px;
+  transform: rotate(-1.5deg);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.generate:hover {
+  transform: rotate(0deg) scale(1.02);
+  background: var(--stamp-dark);
+}
+
+.generate:active {
+  transform: rotate(0deg) scale(0.98);
+}
+
+.generate:focus-visible,
+.add-btn:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ---------- rows / inputs ---------- */
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--paper-line-soft);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.room-tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  min-width: 68px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--paper-line);
+  border-radius: 0;
+  padding: 6px 4px;
+  transition: border-color 0.15s ease;
+}
+
+input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+  font-family: var(--font-body);
+  font-style: italic;
+}
+
+input:focus {
+  border-bottom-color: var(--stamp);
+}
+
+/* ---------- results ---------- */
+
+.results {
+  margin-top: 8px;
+}
+
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-bottom: 36px;
+}
+
+.room {
+  background: var(--paper-dark);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  padding: 18px;
+  overflow-x: auto;
+}
+
+.room h3 {
+  font-size: 15px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid var(--ink);
+  display: inline-block;
+}
+
+.chart {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.seatRow {
+  display: flex;
+  gap: 6px;
+}
+
+.seat {
+  width: 40px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  border-radius: 2px;
+  border: 1px solid var(--seat-empty-border);
+  background: var(--seat-empty);
+  color: var(--text-muted);
+}
+
+.seat.filled {
+  background: var(--seat-filled);
+  border-color: var(--ink-dark);
+  color: var(--seat-filled-text);
+  font-weight: 600;
+}
+
+.seat.empty {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--seat-empty),
+    var(--seat-empty) 4px,
+    var(--paper-dark) 4px,
+    var(--paper-dark) 8px
+  );
+}
+
+/* ---------- table ---------- */
+
+.table-wrap {
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--paper-dark);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+thead th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--stamp-ink);
+  background: var(--ink);
+  padding: 10px 14px;
+}
+
+tbody td {
+  padding: 9px 14px;
+  font-family: var(--font-mono);
+  border-bottom: 1px solid var(--paper-line-soft);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(28, 43, 74, 0.045);
+}
+
+tbody tr:hover {
+  background: rgba(161, 51, 39, 0.08);
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 640px) {
+  #root {
+    padding: 0 14px;
+  }
+
+  .masthead {
+    margin: 0 -14px 28px;
+    padding: 32px 16px 26px;
+  }
+
+  .masthead h1 {
+    font-size: 26px;
+  }
+
+  .row {
+    flex-wrap: wrap;
+  }
+
+  .room-tag {
+    min-width: 100%;
+  }
+}
