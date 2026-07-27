@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import StudentImport from "./components/StudentImport/StudentImport";
+import { API_BASE } from "./utils/api";
 
 function App() {
   const [students, setStudents] = useState([]);
@@ -46,7 +47,7 @@ function App() {
 
   const generateSeating = async () => {
   try {
-    const response = await fetch("http://localhost:3000/api/allocate", {
+    const response = await fetch(`${API_BASE}/api/allocate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -188,8 +189,16 @@ function App() {
                         <div
                           className={`seat${seat ? " filled" : " empty"}`}
                           key={c}
+                          title={seat ? `${seat.roll_no} — ${seat.branch}` : ""}
                         >
-                          {seat || ""}
+                          {seat ? (
+                            <>
+                              <span className="seat-roll">{seat.roll_no}</span>
+                              <span className="seat-branch">{seat.branch}</span>
+                            </>
+                          ) : (
+                            <span className="seat-empty-label">EMPTY</span>
+                          )}
                         </div>
                       ))}
                     </div>

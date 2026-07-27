@@ -1,4 +1,6 @@
 // server.js - Exam Seating Arrangement System
+require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const db = require('./db');
 
@@ -177,4 +179,27 @@ app.get('/api/student/:rollNo', (req, res) => {
   });
 });
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+// Serve the built React frontend (npm run build -> dist/) so this one
+// Express service can host both the API and the UI - convenient for a
+// single-service deploy on Railway. If dist/ doesn't exist (e.g. running
+// the API alone in local dev via `npm run server` while Vite's own dev
+// server handles the frontend on a different port), this simply has no
+// effect and only the /api/* routes below are active.
+const distPath = path.join(__dirname, 'dist');
+app.use(express.static(distPath));
+
+// SPA fallback: any GET that isn't an API route and isn't a static file
+// falls back to index.html so client-side routing keeps working on
+// refresh/deep-links. Placed after the API routes above so it never
+// shadows them.
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) return next();
+  res.sendFile(path.join(distPath, 'index.html'), (err) => {
+    if (err) next(); // dist/ missing (e.g. local API-only dev) - fall through to 404
+  });
+});
+
+// Railway (and most PaaS providers) assign the port dynamically via the
+// PORT env var - the app must listen on it rather than a hardcoded port.
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

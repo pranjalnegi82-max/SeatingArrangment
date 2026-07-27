@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "server": "node server.js"
+    "server": "node server.js",
+    "start": "node server.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
@@ -14,6 +15,7 @@
     "express": "^4.22.2",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.2.0",
+    "mysql": "^2.18.1",
     "mysql2": "^3.23.1",
     "papaparse": "^5.5.4",
     "react": "^19.2.7",
