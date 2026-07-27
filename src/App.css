@@ -310,13 +310,14 @@ input:focus {
   margin-bottom: 12px;
   padding-bottom: 8px;
   border-bottom: 1.5px solid var(--ink);
-  display: inline-block;
+  display: block;
 }
 
 .chart {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   gap: 6px;
+  width: fit-content;
 }
 
 .seatRow {
@@ -325,14 +326,17 @@ input:focus {
 }
 
 .seat {
-  width: 40px;
-  height: 34px;
+  width: 84px;
+  height: 48px;
   flex-shrink: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   font-family: var(--font-mono);
   font-size: 10.5px;
+  line-height: 1.3;
   border-radius: 2px;
   border: 1px solid var(--seat-empty-border);
   background: var(--seat-empty);
@@ -344,6 +348,26 @@ input:focus {
   border-color: var(--ink-dark);
   color: var(--seat-filled-text);
   font-weight: 600;
+}
+
+.seat-roll {
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.seat-branch {
+  font-size: 8.5px;
+  font-weight: 400;
+  opacity: 0.85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.seat-empty-label {
+  font-size: 9px;
+  letter-spacing: 0.5px;
 }
 
 .seat.empty {
