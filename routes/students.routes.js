@@ -18,15 +18,8 @@ router.post('/check-duplicates', auth, controller.checkDuplicates);
 
 router.post(
   '/import',
-  auth,
   (req, res, next) => {
     upload.single('file')(req, res, (err) => {
-      if (err instanceof multer.MulterError) {
-        if (err.code === 'LIMIT_FILE_SIZE') {
-          return res.status(400).json({ error: 'File is too large. Maximum size is 15MB.' });
-        }
-        return res.status(400).json({ error: `Upload error: ${err.message}` });
-      }
       if (err) {
         return res.status(400).json({ error: err.message });
       }

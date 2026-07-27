@@ -49,3 +49,22 @@ CREATE TABLE IF NOT EXISTS import_history (
   failed_rows     INT NOT NULL DEFAULT 0,
   created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE courses (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(10) NOT NULL UNIQUE,
+  name VARCHAR(100) NOT NULL,
+  degree VARCHAR(20) NOT NULL DEFAULT 'B.Tech'
+);
+
+INSERT INTO courses (code, name) VALUES
+  ('CSE', 'Computer Science & Engineering'),
+  ('ECE', 'Electronics & Communication Engineering'),
+  ('ME', 'Mechanical Engineering'),
+  ('CE', 'Civil Engineering'),
+  ('AI', 'Artificial Intelligence'),
+  ('DS', 'Data Science');
+
+ALTER TABLE students
+  ADD COLUMN course_id INT,
+  ADD CONSTRAINT fk_students_course FOREIGN KEY (course_id) REFERENCES courses(id);
